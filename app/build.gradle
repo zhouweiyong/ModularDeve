@@ -1,0 +1,58 @@
+apply plugin: 'com.android.application'
+
+android {
+    //release打包一定要设置签名才可以
+    signingConfigs {
+        release {
+            storeFile file('test.jks')
+            storePassword 'a123456'
+            keyAlias 'test'
+            keyPassword 'a123456'
+        }
+    }
+
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    defaultConfig {
+        applicationId "com.vst.modulardeve"
+        minSdkVersion 15
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+    }
+
+    buildTypes {
+        release {
+            // 不显示Log
+            buildConfigField "boolean", "LEO_DEBUG", "false"
+            //是否zip对齐
+            zipAlignEnabled false
+            // 缩减resource文件
+            shrinkResources false
+            //Proguard
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            buildConfigField "boolean", "LOG_DEBUG", "true"
+            zipAlignEnabled false
+            shrinkResources false
+            minifyEnabled false
+            debuggable true
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:multidex:1.0.1'
+    if (isModule.toBoolean()) {
+        implementation project(':commonlib')
+    } else {
+        implementation project(':MMain')
+        implementation project(':NNews')
+    }
+
+}
